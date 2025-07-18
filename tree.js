@@ -15,18 +15,18 @@ export class Tree {
 
   buildTree(rawArray) {
     const arr = removeDuplicatesFromSortedArray(mergeSort(rawArray));
-    return this.#buildTreeRecur(arr, 0, arr.length - 1);
-  }
+    return buildTreeRecur(arr, 0, arr.length - 1);
 
-  #buildTreeRecur(arr, start, end) {
-    if (start > end) {
-      return null;
+    function buildTreeRecur(arr, start, end) {
+      if (start > end) {
+        return null;
+      }
+      const mid = start + Math.floor((end - start) / 2);
+      const root = new Node(arr[mid]);
+      root.left = buildTreeRecur(arr, start, mid - 1);
+      root.right = buildTreeRecur(arr, mid + 1, end);
+      return root;
     }
-    const mid = start + Math.floor((end - start) / 2);
-    const root = new Node(arr[mid]);
-    root.left = this.#buildTreeRecur(arr, start, mid - 1);
-    root.right = this.#buildTreeRecur(arr, mid + 1, end);
-    return root;
   }
 
   insert(value) {
@@ -58,35 +58,35 @@ export class Tree {
   }
 
   deleteItem(value) {
-    this.root = this.#deleteItemRecur(value);
-  }
+    this.root = deleteItemRecur(value, this.root);
 
-  #deleteItemRecur(value, node = this.root) {
-    if (node === null) {
+    function deleteItemRecur(value, node) {
+      if (node === null) {
+        return node;
+      }
+      if (node.data > value) {
+        node.left = deleteItemRecur(value, node.left);
+      } else if (node.data < value) {
+        node.right = deleteItemRecur(value, node.right);
+      } else {
+        // 0 children or only right child
+        if (node.left === null) {
+          return node.right;
+        }
+        // only left child
+        if (node.right === null) {
+          return node.left;
+        }
+        // both children present
+        let succ = node.right;
+        while (succ !== null && succ.left !== null) {
+          succ = succ.left;
+        }
+        node.data = succ.data;
+        node.right = deleteItemRecur(succ.data, node.right);
+      }
       return node;
     }
-    if (node.data > value) {
-      node.left = this.#deleteItemRecur(value, node.left);
-    } else if (node.data < value) {
-      node.right = this.#deleteItemRecur(value, node.right);
-    } else {
-      // 0 children or only right child
-      if (node.left === null) {
-        return node.right;
-      }
-      // only left child
-      if (node.right === null) {
-        return node.left;
-      }
-      // both children present
-      let succ = node.right;
-      while (succ !== null && succ.left !== null) {
-        succ = succ.left;
-      }
-      node.data = succ.data;
-      node.right = this.#deleteItemRecur(succ.data, node.right);
-    }
-    return node;
   }
 
   find(value, node = this.root) {
@@ -128,28 +128,100 @@ export class Tree {
     return results;
   }
 
-  prettyPrint() {
-    this.#prettyPrintRecur(this.root);
+  inOrderForEach(callback) {
+    if (!(callback instanceof Function)) {
+      throw new Error("inOrderForEach requires a function argument");
+    }
+
+    if (this.root === null) {
+      return [];
+    }
+
+    const results = [];
+    inOrderForEachRecur(this.root);
+    return results;
+
+    function inOrderForEachRecur(node) {
+      if (node.left !== null) {
+        inOrderForEachRecur(node.left);
+      }
+      results.push(callback(node.data));
+      if (node.right !== null) {
+        inOrderForEachRecur(node.right);
+      }
+    }
   }
 
-  #prettyPrintRecur(node, prefix = "", isLeft = true) {
-    if (node === null) {
-      return;
+  preOrderForEach(callback) {
+    if (!(callback instanceof Function)) {
+      throw new Error("preOrderForEach requires a function argument");
     }
-    if (node.right !== null) {
-      this.#prettyPrintRecur(
-        node.right,
-        `${prefix}${isLeft ? "│   " : "    "}`,
-        false
-      );
+
+    if (this.root === null) {
+      return [];
     }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-    if (node.left !== null) {
-      this.#prettyPrintRecur(
-        node.left,
-        `${prefix}${isLeft ? "    " : "│   "}`,
-        true
-      );
+
+    const results = [];
+    preOrderForEachRecur(this.root);
+    return results;
+
+    function preOrderForEachRecur(node) {
+      results.push(callback(node.data));
+      if (node.left !== null) {
+        preOrderForEachRecur(node.left);
+      }
+      if (node.right !== null) {
+        preOrderForEachRecur(node.right);
+      }
+    }
+  }
+
+  postOrderForEach(callback) {
+    if (!(callback instanceof Function)) {
+      throw new Error("postOrderForEach requires a function argument");
+    }
+
+    if (this.root === null) {
+      return [];
+    }
+
+    const results = [];
+    postOrderForEachRecur(this.root);
+    return results;
+
+    function postOrderForEachRecur(node) {
+      if (node.left !== null) {
+        postOrderForEachRecur(node.left);
+      }
+      if (node.right !== null) {
+        postOrderForEachRecur(node.right);
+      }
+      results.push(callback(node.data));
+    }
+  }
+
+  prettyPrint() {
+    prettyPrintRecur(this.root);
+
+    function prettyPrintRecur(node, prefix = "", isLeft = true) {
+      if (node === null) {
+        return;
+      }
+      if (node.right !== null) {
+        prettyPrintRecur(
+          node.right,
+          `${prefix}${isLeft ? "│   " : "    "}`,
+          false
+        );
+      }
+      console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
+      if (node.left !== null) {
+        prettyPrintRecur(
+          node.left,
+          `${prefix}${isLeft ? "    " : "│   "}`,
+          true
+        );
+      }
     }
   }
 }
