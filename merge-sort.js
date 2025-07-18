@@ -1,8 +1,3 @@
-
-export function sortAndRemoveDuplicates(arr) {
-  return removeDuplicatesFromSortedArray(mergeSort(arr));
-}
-
 export function removeDuplicatesFromSortedArray(arr) {
   if (arr.length < 2) {
     return arr;
