@@ -42,8 +42,3 @@ function merge(left, right) {
   return [...sortedArr, ...left, ...right];
 }
 
-// console.log(mergeSort([3, 5, 8, 5, 99, 1])); // [1, 3, 5, 5, 8, 99]
-// const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-// const test2 = sortAndRemoveDuplicates(test);
-// console.log(test);
-// console.log(test2);

@@ -1,4 +1,4 @@
-import { sortAndRemoveDuplicates } from "./array-processing.js";
+import { sortAndRemoveDuplicates } from "./merge-sort.js";
 
 class Node {
   constructor(data) {
