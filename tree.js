@@ -257,6 +257,12 @@ export class Tree {
     }
   }
 
+  rebalance() {
+    const a = [];
+    this.inOrderForEach((e) => a.push(e));
+    this.root = this.buildTree(a);
+  }
+  
   prettyPrint() {
     prettyPrintRecur(this.root);
 
