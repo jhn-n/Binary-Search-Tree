@@ -91,7 +91,7 @@ export class Tree {
 
   find(value, node = this.root) {
     if (node === null) {
-      return node;
+      return null;
     }
     if (node.data > value) {
       return this.find(value, node.left);
@@ -197,6 +197,63 @@ export class Tree {
         postOrderForEachRecur(node.right);
       }
       results.push(callback(node.data));
+    }
+  }
+
+  height(value) {
+    const node = this.find(value);
+    if (node === null) {
+      return null;
+    }
+    return heightRecur(node);
+
+    function heightRecur(node) {
+      if (node === null) {
+        return -1;
+      }
+      return 1 + Math.max(heightRecur(node.left), heightRecur(node.right));
+    }
+  }
+
+  depth(value, node = this.root, deep = 0) {
+    if (node === null) {
+      return null;
+    }
+    if (node.data > value) {
+      return this.depth(value, node.left, deep + 1);
+    }
+    if (node.data < value) {
+      return this.depth(value, node.right, deep + 1);
+    }
+    return deep;
+  }
+
+  isBalanced() {
+    if (this.root === null) {
+      return true;
+    }
+    const queue = [this.root];
+    while (queue.length > 0) {
+      const node = queue.shift();
+      const leftHeight = heightRecur(node.left);
+      const rightHeight = heightRecur(node.right);
+      if (Math.abs(leftHeight - rightHeight) > 1) {
+        return false;
+      }
+      if (leftHeight > 0) {
+        queue.push(node.left);
+      }
+      if (rightHeight > 0) {
+        queue.push(node.right);
+      }
+    }
+    return true;
+
+    function heightRecur(node) {
+      if (node === null) {
+        return -1;
+      }
+      return 1 + Math.max(heightRecur(node.left), heightRecur(node.right));
     }
   }
 
